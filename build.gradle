@@ -20,22 +20,41 @@ configurations {
 }
 
 repositories {
-	mavenCentral()
+	mavenCentral()  // 이 줄을 추가해 주세요
 }
 
 dependencies {
+	// JWT 라이브러리
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'  // JWT 라이브러리 (API)
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'  // JWT 라이브러리 (구현체)
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'  // JWT 라이브러리 (Jackson 사용)
+
+	// Spring Boot 관련 라이브러리
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Jakarta Servlet API (Spring Boot 3+)
+	implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+
+	// Lombok (코드 자동 생성)
 	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// 개발 관련 라이브러리
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// MySQL 연결 라이브러리
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	// 테스트 라이브러리
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.mockito:mockito-core:5.7.0'
+	testImplementation 'org.mockito:mockito-inline:5.2.0'
 }
 
 tasks.named('test') {
