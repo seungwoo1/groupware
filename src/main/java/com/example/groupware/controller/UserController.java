@@ -5,7 +5,6 @@ import com.example.groupware.dto.UserRequestDto;
 import com.example.groupware.entity.User;
 import com.example.groupware.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
