@@ -4,6 +4,7 @@ import com.example.groupware.security.JwtAuthenticationFilter;
 import com.example.groupware.security.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -34,9 +35,14 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)  // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users", "/users/login", "/users/{id}", "/users/me").permitAll()  // 회원가입과 로그인 API는 인증 없이 접근 가능
-                        .requestMatchers("/admin/**").hasRole("ADMIN") // /admin 경로는 관리자만 접근 가능
-                        .anyRequest().authenticated()  // 나머지 API는 인증이 필요
+                        .requestMatchers("/users", "/users/login").permitAll()  // 회원가입 & 로그인 API 허용
+                        .requestMatchers("/users/{id}", "/users/me").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")  // 관리자만 접근 가능
+                        .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()  // GET 요청은 누구나 접근 가능
+                        .requestMatchers(HttpMethod.POST, "/posts").authenticated()  // POST 요청은 인증된 사용자만 접근 가능
+                        .requestMatchers(HttpMethod.PUT, "/posts/**").authenticated()  // PUT 요청은 인증된 사용자만 접근 가능
+                        .requestMatchers(HttpMethod.DELETE, "/posts/**").authenticated()  // DELETE 요청은 인증된 사용자만 접근 가능
+                        .anyRequest().authenticated()  // 그 외 요청은 인증 필요
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // JWT를 사용하므로 세션 관리 비활성화

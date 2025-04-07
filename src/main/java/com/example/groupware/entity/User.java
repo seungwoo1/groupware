@@ -1,11 +1,13 @@
 package com.example.groupware.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity // JPA에서 이 클래스가 데이터베이스 테이블과 매핑된다는 것을 의미
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Getter // Lombok이 자동으로 getter 메서드를 생성해 줌
 @Setter
 @NoArgsConstructor // 기본 생성자 자동 생성
