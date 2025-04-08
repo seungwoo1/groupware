@@ -1,7 +1,9 @@
 package com.example.groupware.config;
 
+import com.example.groupware.repository.UserRepository;
 import com.example.groupware.security.JwtAuthenticationFilter;
 import com.example.groupware.security.JwtUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,6 +24,9 @@ public class SecurityConfig {
     public SecurityConfig(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
+
+    @Autowired
+    private UserRepository userRepository;
 
     // 비밀번호 암호화
     @Bean
@@ -47,7 +52,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // JWT를 사용하므로 세션 관리 비활성화
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);  // JWT 인증 필터 추가
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);  // JWT 인증 필터 추가
 
         return http.build();
     }

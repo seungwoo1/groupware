@@ -3,10 +3,11 @@ package com.example.groupware.controller;
 import com.example.groupware.dto.PostRequestDto;
 import com.example.groupware.dto.PostResponseDto;
 import com.example.groupware.entity.PostType;
+import com.example.groupware.security.UserDetailsImpl;
 import com.example.groupware.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,10 +25,11 @@ public class PostController {
 
     // 게시글 저장
     @PostMapping
-    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto requestDto) {
-        // PostService에서 PostResponseDto를 반환하도록 수정
-        PostResponseDto postResponseDto = postService.savePost(requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(postResponseDto);
+    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto requestDto,
+                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        PostResponseDto responseDto = postService.savePost(requestDto, userDetails);
+        return ResponseEntity.ok(responseDto);
     }
 
     // 모든 게시글 조회
@@ -50,16 +52,22 @@ public class PostController {
 
     // 게시글 수정
     @PutMapping("/{id}")
-    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
-        // PostService에서 PostResponseDto를 반환하도록 수정
-        PostResponseDto postResponseDto = postService.updatePost(id, requestDto.getTitle(), requestDto.getContent());
-        return ResponseEntity.ok(postResponseDto);
+    public ResponseEntity<PostResponseDto> updatePost(
+            @PathVariable Long id,
+            @RequestBody PostRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        PostResponseDto responseDto = postService.updatePost(id, requestDto.getTitle(), requestDto.getContent(), userDetails);
+        return ResponseEntity.ok(responseDto);
     }
 
     // 게시글 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
-        postService.deletePost(id);
+    public ResponseEntity<Void> deletePost(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        postService.deletePost(id, userDetails);
         return ResponseEntity.noContent().build(); // 204 No Content 반환
     }
 }

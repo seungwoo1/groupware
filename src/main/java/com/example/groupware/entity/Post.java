@@ -1,5 +1,6 @@
     package com.example.groupware.entity;
 
+    import com.example.groupware.dto.PostRequestDto;
     import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
     import jakarta.persistence.*;
     import lombok.Getter;
@@ -38,6 +39,13 @@
             this.title = title;
             this.content = content;
             this.postType = postType;
+            this.author = author;
+        }
+
+        public Post(PostRequestDto requestDto, User author) {
+            this.title = requestDto.getTitle();
+            this.content = requestDto.getContent();
+            this.postType = requestDto.getPostType();
             this.author = author;
         }
 

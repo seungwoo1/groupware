@@ -1,5 +1,7 @@
 package com.example.groupware.security;
 
+import com.example.groupware.entity.User;
+import com.example.groupware.repository.UserRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,9 +17,11 @@ import java.util.Collections;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -33,13 +37,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = jwtUtil.extractUsername(token);
                 String role = jwtUtil.extractRole(token).name();  // 역할 추출
 
-                // 권한을 GrantedAuthority로 변환
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + role);
+                // 유저 조회
+                User user = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-                // 인증 객체 생성 (username과 role 권한 추가)
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, Collections.singletonList(authority));
+                UserDetailsImpl userDetails = new UserDetailsImpl(user);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                // SecurityContext에 인증 정보 저장
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
