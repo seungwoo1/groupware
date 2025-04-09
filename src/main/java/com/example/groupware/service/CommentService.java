@@ -7,6 +7,7 @@ import com.example.groupware.entity.Post;
 import com.example.groupware.entity.User;
 import com.example.groupware.repository.CommentRepository;
 import com.example.groupware.repository.PostRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +57,7 @@ public class CommentService {
     }
 
     // 댓글 수정
+    @Transactional
     public CommentResponseDto updateComment(Long commentId, CommentRequestDto requestDto, User user) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
